@@ -42,7 +42,32 @@ public:
 
     bool operator<(BigDecimalInt anotherDec);
 
-    bool operator>(BigDecimalInt anotherDec);
+    bool operator>(BigDecimalInt anotherDec)
+    {
+        if (num.length() > anotherDec.num.length())
+        {
+            return true;
+        }
+        else
+        {
+            for (int i = 0; i < num.length(); i++)
+            {
+                if (num[i] > anotherDec.num[i])
+                {
+                    return true;
+                }
+                else if (num[i] == anotherDec.num[i])
+                {
+                    continue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
 
     bool operator==(BigDecimalInt anotherDec);
 
@@ -50,7 +75,10 @@ public:
 
     int size();
 
-    int sign();
+    int sign()
+    {
+        return signOfNumber;
+    }
 
     // You will also need to overwrite the << operator as follows: (as friend or external function)
     // k.
@@ -73,9 +101,17 @@ ostream &operator<<(ostream &out, BigDecimalInt bigInt)
 
 int main() {
     BigDecimalInt num1("99910356");
-    BigDecimalInt num2("12899837");
+    BigDecimalInt num2("99910357");
     BigDecimalInt num3 = num1 + num2;
-    //cout << num3.num << endl;
-    cout << num1;
+    //cout << num1;
+    // if (num1 > num2)
+    // {
+    //     cout << "True!";
+    // }
+    // else
+    // {
+    //     cout << "False!";
+    // }
+    
     return 0;
 }
