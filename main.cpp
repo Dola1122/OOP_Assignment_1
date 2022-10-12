@@ -54,14 +54,28 @@ public:
 
     // You will also need to overwrite the << operator as follows: (as friend or external function)
     // k.
-    friend ostream &operator<<(ostream &out, BigDecimalInt b);
+    friend ostream &operator<<(ostream &out, BigDecimalInt bigInt);
 
 };
+
+ostream &operator<<(ostream &out, BigDecimalInt bigInt)
+{
+    if (bigInt.signOfNumber == -1)
+    {
+        out << '-';
+    }
+    for (int i = 0; i < bigInt.num.size(); i++)
+    {
+        out << bigInt.num[i];
+    }
+    return out;
+}
 
 int main() {
     BigDecimalInt num1("99910356");
     BigDecimalInt num2("12899837");
     BigDecimalInt num3 = num1 + num2;
-    cout << num3.num << endl;
+    //cout << num3.num << endl;
+    cout << num1;
     return 0;
 }
