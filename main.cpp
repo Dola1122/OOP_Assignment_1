@@ -19,7 +19,7 @@ public:
 
     //initialize from integer constructor : I don't know how to do it btw
     BigDecimalInt (int decInt);
-
+    
 
     // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
     BigDecimalInt operator+(BigDecimalInt anotherDec) {
@@ -52,7 +52,7 @@ public:
         {
             for (int i = 0; i < num.length(); i++)
             {
-                if (num[i] > anotherDec.num[i])
+                if (int (num[i] - '0') * signOfNumber > int (anotherDec.num[i] - '0') * anotherDec.signOfNumber)
                 {
                     return true;
                 }
@@ -71,7 +71,13 @@ public:
 
     bool operator==(BigDecimalInt anotherDec);
 
-    BigDecimalInt operator=(BigDecimalInt anotherDec);
+    BigDecimalInt operator=(BigDecimalInt anotherDec)
+    {
+        num = anotherDec.num;
+        signOfNumber = anotherDec.signOfNumber;
+        sizeOfNumber = anotherDec.sizeOfNumber;
+        return *this;
+    }
 
     int size();
 
@@ -86,24 +92,25 @@ public:
 
 };
 
-ostream &operator<<(ostream &out, BigDecimalInt bigInt)
+ostream &operator<<(ostream &out, BigDecimalInt b)
 {
-    if (bigInt.signOfNumber == -1)
+    if (b.signOfNumber == -1)
     {
         out << '-';
     }
-    for (int i = 0; i < bigInt.num.size(); i++)
+    for (int i = 0; i < b.num.size(); i++)
     {
-        out << bigInt.num[i];
+        out << b.num[i];
     }
     return out;
 }
 
 int main() {
     BigDecimalInt num1("99910356");
-    BigDecimalInt num2("99910357");
+    BigDecimalInt num2("99910351");
+    //num2 = num1;
     BigDecimalInt num3 = num1 + num2;
-    //cout << num1;
+    //cout << num1 << ' ' << num2;
     // if (num1 > num2)
     // {
     //     cout << "True!";
