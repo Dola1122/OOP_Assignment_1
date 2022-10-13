@@ -69,7 +69,32 @@ public:
         return false;
     }
 
-    bool operator==(BigDecimalInt anotherDec);
+    bool operator==(BigDecimalInt anotherDec)
+    {
+        if (num.length() != anotherDec.num.length())
+        {       
+            return false;
+        }
+        else if (signOfNumber != anotherDec.signOfNumber)
+        {
+            return false;
+        }
+        else
+        {
+            for (int i = 0; i < num.length(); i++)
+            {
+                if (num[i] == anotherDec.num[i])
+                {
+                    continue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        return true;        
+    }
 
     BigDecimalInt operator=(BigDecimalInt anotherDec)
     {
@@ -107,7 +132,7 @@ ostream &operator<<(ostream &out, BigDecimalInt b)
 
 int main() {
     BigDecimalInt num1("99910356");
-    BigDecimalInt num2("99910351");
+    BigDecimalInt num2("99910356");
     //num2 = num1;
     BigDecimalInt num3 = num1 + num2;
     //cout << num1 << ' ' << num2;
@@ -118,6 +143,15 @@ int main() {
     // else
     // {
     //     cout << "False!";
+    // }
+
+    // if (num1 == num2)
+    // {
+    //     cout << "They are equal!";
+    // }
+    // else 
+    // {
+    //     cout << "they are not equal!";
     // }
     
     return 0;
