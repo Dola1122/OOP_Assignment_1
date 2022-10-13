@@ -11,15 +11,14 @@ class BigDecimalInt {
 public:
     string num;
     int signOfNumber = 1; // I think it's value should be 1 or -1 only
-    int sizeOfNumber;
 
     BigDecimalInt(string decStr) {
         this->num = decStr;
     };
 
     //initialize from integer constructor : I don't know how to do it btw
-    BigDecimalInt (int decInt);
-    
+    BigDecimalInt(int decInt);
+
 
     // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
     BigDecimalInt operator+(BigDecimalInt anotherDec) {
@@ -40,28 +39,26 @@ public:
 
     BigDecimalInt operator-(BigDecimalInt anotherDec);
 
-    bool operator<(BigDecimalInt anotherDec);
-
-    bool operator>(BigDecimalInt anotherDec)
-    {
-        if (num.length() > anotherDec.num.length())
-        {
+    bool operator<(BigDecimalInt anotherDec) {
+        if (signOfNumber < anotherDec.signOfNumber) {
+            return true;
+        } else if (signOfNumber > anotherDec.signOfNumber) {
+            return false;
+        } else if ((num.length() < anotherDec.num.length() && signOfNumber == 1) ||
+                   (num.length() > anotherDec.num.length() && signOfNumber == -1)) {
             return true;
         }
-        else
-        {
-            for (int i = 0; i < num.length(); i++)
-            {
-                if (int (num[i] - '0') * signOfNumber > int (anotherDec.num[i] - '0') * anotherDec.signOfNumber)
-                {
+        else if ((num.length() < anotherDec.num.length() && signOfNumber == -1) ||
+                 (num.length() > anotherDec.num.length() && signOfNumber == 1)){
+            return false;
+        }
+        else {
+            for (int i = 0; i < anotherDec.num.length(); i++) {
+                if (int(anotherDec.num[i] - '0') * anotherDec.signOfNumber > int(num[i] - '0') * signOfNumber) {
                     return true;
-                }
-                else if (num[i] == anotherDec.num[i])
-                {
+                } else if (anotherDec.num[i] == num[i]) {
                     continue;
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
@@ -69,45 +66,50 @@ public:
         return false;
     }
 
-    bool operator==(BigDecimalInt anotherDec)
-    {
-        if (num.length() != anotherDec.num.length())
-        {       
-            return false;
-        }
-        else if (signOfNumber != anotherDec.signOfNumber)
-        {
-            return false;
-        }
-        else
-        {
-            for (int i = 0; i < num.length(); i++)
-            {
-                if (num[i] == anotherDec.num[i])
-                {
+
+    bool operator>(BigDecimalInt anotherDec) {
+        if (num.length() > anotherDec.num.length()) {
+            return true;
+        } else {
+            for (int i = 0; i < num.length(); i++) {
+                if (int(num[i] - '0') * signOfNumber > int(anotherDec.num[i] - '0') * anotherDec.signOfNumber) {
+                    return true;
+                } else if (num[i] == anotherDec.num[i]) {
                     continue;
-                }
-                else
-                {
+                } else {
                     return false;
                 }
             }
         }
-        return true;        
+        return false;
     }
 
-    BigDecimalInt operator=(BigDecimalInt anotherDec)
-    {
+    bool operator==(BigDecimalInt anotherDec) {
+        if (num.length() != anotherDec.num.length()) {
+            return false;
+        } else if (signOfNumber != anotherDec.signOfNumber) {
+            return false;
+        } else {
+            for (int i = 0; i < num.length(); i++) {
+                if (num[i] == anotherDec.num[i]) {
+                    continue;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    BigDecimalInt operator=(BigDecimalInt anotherDec) {
         num = anotherDec.num;
         signOfNumber = anotherDec.signOfNumber;
-        sizeOfNumber = anotherDec.sizeOfNumber;
         return *this;
     }
 
     int size();
 
-    int sign()
-    {
+    int sign() {
         return signOfNumber;
     }
 
@@ -117,24 +119,23 @@ public:
 
 };
 
-ostream &operator<<(ostream &out, BigDecimalInt b)
-{
-    if (b.signOfNumber == -1)
-    {
+ostream &operator<<(ostream &out, BigDecimalInt b) {
+    if (b.signOfNumber == -1) {
         out << '-';
     }
-    for (int i = 0; i < b.num.size(); i++)
-    {
+    for (int i = 0; i < b.num.size(); i++) {
         out << b.num[i];
     }
     return out;
 }
 
 int main() {
-    BigDecimalInt num1("99910356");
-    BigDecimalInt num2("99910356");
+    BigDecimalInt num1("999");
+    num1.signOfNumber = -1;
+    BigDecimalInt num2("92");
+    num2.signOfNumber = -1;
     //num2 = num1;
-    BigDecimalInt num3 = num1 + num2;
+    cout << (num1 < num2) << endl;
     //cout << num1 << ' ' << num2;
     // if (num1 > num2)
     // {
@@ -149,10 +150,10 @@ int main() {
     // {
     //     cout << "They are equal!";
     // }
-    // else 
+    // else
     // {
     //     cout << "they are not equal!";
     // }
-    
+
     return 0;
 }
