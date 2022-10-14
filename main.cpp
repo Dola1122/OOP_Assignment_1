@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -23,17 +24,41 @@ public:
     // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
     BigDecimalInt operator+(BigDecimalInt anotherDec) {
         BigDecimalInt sum("");
+        /*if(anotherDec.num.length()>num.length()){
+            int numberOfZeros = anotherDec.num.length()-num.length();
+            string zero="";
+            for(int i=0; i<numberOfZeros ; i++) 
+            zero = zero + "0";
+            zero = zero + num;
+            cout<<zero<<endl;
+            num=zero;
+            cout<<num<<endl;
+        }
+        else if(anotherDec.num.length()<num.length()){
+            int numberOfZeros = num.length()-anotherDec.num.length();
+            string zero="";
+            for(int i=0; i<numberOfZeros ; i++) 
+            zero = zero + "0";
+            zero = zero + anotherDec.num;
+            anotherDec.num=zero;
+        }
+        */
+        int sum_of_digit;
+
         int carry = 0;
-        for (int i = num.length() - 1; i >= 0; i--) {
-            int sum_of_digit;
-            sum_of_digit = int(num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
-            sum.num = to_string((sum_of_digit % 10)) + sum.num;
+        for (int i =num.length()-1 ; i>=0;i--) {
+            cout<<num[i]<<endl<<anotherDec.num[i]<<endl;
+            sum_of_digit = int(num[i] ) + int(anotherDec.num[i] ) + carry;
+            cout<<sum_of_digit<<endl;
+            sum.num = to_string((sum_of_digit % 10))+ sum.num ;
             carry = sum_of_digit / 10;
+            cout<<sum.num<<endl;
         }
         if (carry > 0) {
             sum.num = to_string(carry) + sum.num;
         }
         return sum;
+        
     }
 
 
@@ -130,12 +155,13 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 }
 
 int main() {
-    BigDecimalInt num1("999");
+    BigDecimalInt num1("5");
     num1.signOfNumber = -1;
-    BigDecimalInt num2("92");
+    BigDecimalInt num2("1");
     num2.signOfNumber = -1;
+    cout<<num1 + num2<<endl;
     //num2 = num1;
-    cout << (num1 < num2) << endl;
+    //cout << (num1 < num2) << endl;
     //cout << num1 << ' ' << num2;
     // if (num1 > num2)
     // {
