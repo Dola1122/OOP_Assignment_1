@@ -24,7 +24,7 @@ public:
     // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
     BigDecimalInt operator+(BigDecimalInt anotherDec) {
         BigDecimalInt sum("");
-        /*if(anotherDec.num.length()>num.length()){
+        if(anotherDec.num.length()>num.length()){
             int numberOfZeros = anotherDec.num.length()-num.length();
             string zero="";
             for(int i=0; i<numberOfZeros ; i++) 
@@ -42,17 +42,15 @@ public:
             zero = zero + anotherDec.num;
             anotherDec.num=zero;
         }
-        */
+        
         int sum_of_digit;
 
         int carry = 0;
         for (int i =num.length()-1 ; i>=0;i--) {
-            cout<<num[i]<<endl<<anotherDec.num[i]<<endl;
-            sum_of_digit = int(num[i] ) + int(anotherDec.num[i] ) + carry;
-            cout<<sum_of_digit<<endl;
+            sum_of_digit = int(num[i]-'0' ) + int(anotherDec.num[i]-'0' ) + carry;
             sum.num = to_string((sum_of_digit % 10))+ sum.num ;
             carry = sum_of_digit / 10;
-            cout<<sum.num<<endl;
+
         }
         if (carry > 0) {
             sum.num = to_string(carry) + sum.num;
@@ -155,9 +153,9 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 }
 
 int main() {
-    BigDecimalInt num1("5");
+    BigDecimalInt num1("999");
     num1.signOfNumber = -1;
-    BigDecimalInt num2("1");
+    BigDecimalInt num2("12");
     num2.signOfNumber = -1;
     cout<<num1 + num2<<endl;
     //num2 = num1;
