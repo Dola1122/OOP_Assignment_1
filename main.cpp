@@ -24,31 +24,30 @@ public:
     // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
     BigDecimalInt operator+(BigDecimalInt anotherDec) {
         BigDecimalInt sum("");
-        if(anotherDec.num.length()>num.length()){
-            int numberOfZeros = anotherDec.num.length()-num.length();
-            string zero="";
-            for(int i=0; i<numberOfZeros ; i++) 
-            zero = zero + "0";
+        if (anotherDec.num.length() > num.length()) {
+            int numberOfZeros = anotherDec.num.length() - num.length();
+            string zero = "";
+            for (int i = 0; i < numberOfZeros; i++)
+                zero = zero + "0";
             zero = zero + num;
-            cout<<zero<<endl;
-            num=zero;
-            cout<<num<<endl;
-        }
-        else if(anotherDec.num.length()<num.length()){
-            int numberOfZeros = num.length()-anotherDec.num.length();
-            string zero="";
-            for(int i=0; i<numberOfZeros ; i++) 
-            zero = zero + "0";
+            cout << zero << endl;
+            num = zero;
+            cout << num << endl;
+        } else if (anotherDec.num.length() < num.length()) {
+            int numberOfZeros = num.length() - anotherDec.num.length();
+            string zero = "";
+            for (int i = 0; i < numberOfZeros; i++)
+                zero = zero + "0";
             zero = zero + anotherDec.num;
-            anotherDec.num=zero;
+            anotherDec.num = zero;
         }
-        
+
         int sum_of_digit;
 
         int carry = 0;
-        for (int i =num.length()-1 ; i>=0;i--) {
-            sum_of_digit = int(num[i]-'0' ) + int(anotherDec.num[i]-'0' ) + carry;
-            sum.num = to_string((sum_of_digit % 10))+ sum.num ;
+        for (int i = num.length() - 1; i >= 0; i--) {
+            sum_of_digit = int(num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
+            sum.num = to_string((sum_of_digit % 10)) + sum.num;
             carry = sum_of_digit / 10;
 
         }
@@ -56,11 +55,74 @@ public:
             sum.num = to_string(carry) + sum.num;
         }
         return sum;
-        
+
     }
 
 
-    BigDecimalInt operator-(BigDecimalInt anotherDec);
+    BigDecimalInt operator-(BigDecimalInt anotherDec) {
+        if (anotherDec.num.length() > num.length()) {
+            int numberOfZeros = anotherDec.num.length() - num.length();
+            string zero = "";
+            for (int i = 0; i < numberOfZeros; i++)
+                zero = zero + "0";
+            zero = zero + num;
+            cout << zero << endl;
+            num = zero;
+            cout << num << endl;
+        } else if (anotherDec.num.length() < num.length()) {
+            int numberOfZeros = num.length() - anotherDec.num.length();
+            string zero = "";
+            for (int i = 0; i < numberOfZeros; i++)
+                zero = zero + "0";
+            zero = zero + anotherDec.num;
+            anotherDec.num = zero;
+        }
+        BigDecimalInt result(""), newNumber(num);
+        newNumber.signOfNumber = 1;
+        result.signOfNumber = 1;
+        string secondNumber9sComp = "";
+        if (newNumber > anotherDec) {
+            for (int i = 0; i < anotherDec.num.length(); i++) {
+                secondNumber9sComp += to_string('9' - anotherDec.num[i]);
+            }
+
+            anotherDec.num = secondNumber9sComp;
+
+            BigDecimalInt sum("");
+            int sum_of_digit;
+
+            int carry = 1;
+            for (int i = newNumber.num.length() - 1; i >= 0; i--) {
+                sum_of_digit = int(newNumber.num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
+                sum.num = to_string((sum_of_digit % 10)) + sum.num;
+                carry = sum_of_digit / 10;
+
+            }
+            return sum;
+        } else {
+            if(anotherDec > newNumber){
+                result.signOfNumber = -1;
+            }
+            for (int i = 0; i < newNumber.num.length(); i++) {
+                secondNumber9sComp += to_string('9' - newNumber.num[i]);
+            }
+
+            newNumber.num = secondNumber9sComp;
+
+            BigDecimalInt sum("");
+            int sum_of_digit;
+
+            int carry = 1;
+            for (int i = anotherDec.num.length() - 1; i >= 0; i--) {
+                sum_of_digit = int(anotherDec.num[i] - '0') + int(newNumber.num[i] - '0') + carry;
+                sum.num = to_string((sum_of_digit % 10)) + sum.num;
+                carry = sum_of_digit / 10;
+
+            }
+            return sum;
+
+        }
+    };
 
     bool operator<(BigDecimalInt anotherDec) {
         if (signOfNumber < anotherDec.signOfNumber) {
@@ -70,12 +132,10 @@ public:
         } else if ((num.length() < anotherDec.num.length() && signOfNumber == 1) ||
                    (num.length() > anotherDec.num.length() && signOfNumber == -1)) {
             return true;
-        }
-        else if ((num.length() < anotherDec.num.length() && signOfNumber == -1) ||
-                 (num.length() > anotherDec.num.length() && signOfNumber == 1)){
+        } else if ((num.length() < anotherDec.num.length() && signOfNumber == -1) ||
+                   (num.length() > anotherDec.num.length() && signOfNumber == 1)) {
             return false;
-        }
-        else {
+        } else {
             for (int i = 0; i < anotherDec.num.length(); i++) {
                 if (int(anotherDec.num[i] - '0') * anotherDec.signOfNumber > int(num[i] - '0') * signOfNumber) {
                     return true;
@@ -153,11 +213,11 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 }
 
 int main() {
-    BigDecimalInt num1("999");
-    num1.signOfNumber = -1;
-    BigDecimalInt num2("12");
-    num2.signOfNumber = -1;
-    cout<<num1 + num2<<endl;
+    BigDecimalInt num1("2660");
+    num1.signOfNumber = 1;
+    BigDecimalInt num2("200");
+    num2.signOfNumber = 1;
+    cout << num1 - num2 << endl;
     //num2 = num1;
     //cout << (num1 < num2) << endl;
     //cout << num1 << ' ' << num2;
