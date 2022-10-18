@@ -5,29 +5,50 @@
 
 using namespace std;
 
-// bool validateInput(string num)
-// {
-//     regex valid("[+-]?[0-9]+");
-//     return regex_match(num, valid);   
-// }
+bool validateInput(string num)
+{
+    regex valid("[+-]?[0-9]+");
+    return regex_match(num, valid);   
+}
 
 // اكتبو اسماء الفانكشن و الفاريبلز بال camelCase , myVariableNameIsLikeThis
 // اسماء الclasses بال capitalized , MyClassName
 
 class BigDecimalInt {
-public:
     string num;
     int signOfNumber = 1; // I think it's value should be 1 or -1 only
+    int sizeOfNumber = 1;
 
+public:
     BigDecimalInt(string decStr) {
-        // if(validateInput(decStr))
-        //     {
-        //         this->num = decStr;
-        //     }
-        //     else
-        //     {
-        //         this->num = "0";
-        //     }
+        if(validateInput(decStr))
+            {
+                string temp;
+                int counter = 0;
+                if (num[0] == '-')
+                {
+                    signOfNumber = -1;
+                }
+                if (decStr.length() == 1 )
+                {
+                    this->num = decStr;
+                }
+                else
+                {
+                    while (decStr[counter] == '0' and counter < decStr.length()) // to remove the left zeros
+                    {
+                        counter++;
+                    }
+                    temp = decStr.substr(counter, decStr.length());
+                    
+                    this->num = temp;
+                    sizeOfNumber = decStr.length() - counter;
+                    }
+            }
+            else
+            {
+                this->num = "0";
+            }
     };
 
     //initialize from integer constructor : I don't know how to do it btw
@@ -90,6 +111,7 @@ public:
             zero = zero + anotherDec.num;
             anotherDec.num = zero;
         }
+
         BigDecimalInt result(""), newNumber(num);
         newNumber.signOfNumber = 1;
         result.signOfNumber = 1;
@@ -203,7 +225,10 @@ public:
         return *this;
     }
 
-    int size();
+    int size()
+    {
+        return sizeOfNumber;
+    }
 
     int sign() {
         return signOfNumber;
@@ -226,19 +251,14 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 }
 
 int main() {
-<<<<<<< HEAD
-    BigDecimalInt num1("+-999");
-    num1.signOfNumber = -1;
-    BigDecimalInt num2("12");
-    num2.signOfNumber = -1;
-    cout<<num1 + num2<<endl;
-=======
+
     BigDecimalInt num1("2660");
-    num1.signOfNumber = 1;
+    //num1.signOfNumber = 1;
     BigDecimalInt num2("200");
-    num2.signOfNumber = 1;
+    //num2.signOfNumber = 1;
+    //BigDecimalInt num3("5");
     cout << num1 - num2 << endl;
->>>>>>> 73424f4a456d119496d6a112c3050b42a04bbd91
+    //cout << num3 << ' ' << num3.size();
     //num2 = num1;
     //cout << (num1 < num2) << endl;
     //cout << num1 << ' ' << num2;
