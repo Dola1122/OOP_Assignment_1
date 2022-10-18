@@ -1,9 +1,15 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <regex>
 
 using namespace std;
 
+// bool validateInput(string num)
+// {
+//     regex valid("[+-]?[0-9]+");
+//     return regex_match(num, valid);   
+// }
 
 // اكتبو اسماء الفانكشن و الفاريبلز بال camelCase , myVariableNameIsLikeThis
 // اسماء الclasses بال capitalized , MyClassName
@@ -14,7 +20,14 @@ public:
     int signOfNumber = 1; // I think it's value should be 1 or -1 only
 
     BigDecimalInt(string decStr) {
-        this->num = decStr;
+        // if(validateInput(decStr))
+        //     {
+        //         this->num = decStr;
+        //     }
+        //     else
+        //     {
+        //         this->num = "0";
+        //     }
     };
 
     //initialize from integer constructor : I don't know how to do it btw
@@ -153,7 +166,7 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 }
 
 int main() {
-    BigDecimalInt num1("999");
+    BigDecimalInt num1("+-999");
     num1.signOfNumber = -1;
     BigDecimalInt num2("12");
     num2.signOfNumber = -1;
