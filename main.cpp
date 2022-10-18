@@ -52,7 +52,21 @@ public:
     };
 
     //initialize from integer constructor : I don't know how to do it btw
-    BigDecimalInt(int decInt);
+    BigDecimalInt(int decInt)
+    {
+        if (decInt < 0)
+        {
+            signOfNumber = -1;
+            this->num = to_string(decInt);
+            this->num = num.substr(1, num.length());
+            sizeOfNumber = num.size();
+        }
+        else
+        {
+            this->num = to_string(decInt);
+            sizeOfNumber = num.size();
+        }
+    }
 
 
     // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
@@ -256,9 +270,9 @@ int main() {
     //num1.signOfNumber = 1;
     BigDecimalInt num2("200");
     //num2.signOfNumber = 1;
-    //BigDecimalInt num3("5");
+    BigDecimalInt num3(0);
     cout << num1 - num2 << endl;
-    //cout << num3 << ' ' << num3.size();
+    cout << num3 << ' ' << num3.size();
     //num2 = num1;
     //cout << (num1 < num2) << endl;
     //cout << num1 << ' ' << num2;
