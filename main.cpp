@@ -283,14 +283,5 @@ int main() {
     //     cout << "False!";
     // }
 
-    // if (num1 == num2)
-    // {
-    //     cout << "They are equal!";
-    // }
-    // else
-    // {
-    //     cout << "they are not equal!";
-    // }
-
     return 0;
 }
