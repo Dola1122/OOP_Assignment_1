@@ -1,27 +1,71 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <regex>
 
 using namespace std;
 
-
-// اكتبو اسماء الفانكشن و الفاريبلز بال camelCase , myVariableNameIsLikeThis
-// اسماء الclasses بال capitalized , MyClassName
+bool validateInput(string num)
+{
+    regex valid("[+-]?[0-9]+");
+    return regex_match(num, valid);   
+}
 
 class BigDecimalInt {
-public:
     string num;
-    int signOfNumber = 1; // I think it's value should be 1 or -1 only
+    int signOfNumber = 1;
+    int sizeOfNumber = 1;
 
+public:
     BigDecimalInt(string decStr) {
-        this->num = decStr;
+        if(validateInput(decStr))
+            {
+                string temp;
+                int counter = 0;
+                if (decStr[0] == '-')
+                {
+                    this->signOfNumber = -1;
+                }
+                if (decStr.length() == 1 )
+                {
+                    this->num = decStr;
+                }
+                else
+                {
+                    while (decStr[counter] == '0' and counter < decStr.length()) // to remove the left zeros
+                    {
+                        counter++;
+                    }
+                    temp = decStr.substr(counter, decStr.length());
+                    
+                    this->num = temp;
+                    sizeOfNumber = decStr.length() - counter;
+                    }
+            }
+            else
+            {
+                this->num = "0";
+            }
     };
 
     //initialize from integer constructor : I don't know how to do it btw
-    BigDecimalInt(int decInt);
+    BigDecimalInt(int decInt)
+    {
+        if (decInt < 0)
+        {
+            signOfNumber = -1;
+            this->num = to_string(decInt);
+            this->num = num.substr(1, num.length());
+            sizeOfNumber = num.size();
+        }
+        else
+        {
+            this->num = to_string(decInt);
+            sizeOfNumber = num.size();
+        }
+    }
 
 
-    // دي ميثود الجمع انا كنت حاولت فيها قبل كدا بس كملو انتو بقا
     BigDecimalInt operator+(BigDecimalInt anotherDec) {
         BigDecimalInt sum("");
         if (anotherDec.num.length() > num.length()) {
@@ -65,18 +109,15 @@ public:
             string zero = "";
             for (int i = 0; i < numberOfZeros; i++)
                 zero = zero + "0";
-            zero = zero + num;
-            cout << zero << endl;
-            num = zero;
-            cout << num << endl;
+            num = zero + num;
         } else if (anotherDec.num.length() < num.length()) {
             int numberOfZeros = num.length() - anotherDec.num.length();
             string zero = "";
             for (int i = 0; i < numberOfZeros; i++)
                 zero = zero + "0";
-            zero = zero + anotherDec.num;
-            anotherDec.num = zero;
+            anotherDec.num = zero + anotherDec.num;
         }
+
         BigDecimalInt result(""), newNumber(num);
         newNumber.signOfNumber = 1;
         result.signOfNumber = 1;
@@ -90,18 +131,16 @@ public:
 
             BigDecimalInt sum("");
             int sum_of_digit;
-
+               sum.num = "";
             int carry = 1;
             for (int i = newNumber.num.length() - 1; i >= 0; i--) {
                 sum_of_digit = int(newNumber.num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
                 sum.num = to_string((sum_of_digit % 10)) + sum.num;
                 carry = sum_of_digit / 10;
-
             }
             return sum;
         } else {
             if(anotherDec > newNumber){
-                result.signOfNumber = -1;
             }
             for (int i = 0; i < newNumber.num.length(); i++) {
                 secondNumber9sComp += to_string('9' - newNumber.num[i]);
@@ -113,12 +152,14 @@ public:
             int sum_of_digit;
 
             int carry = 1;
+            sum.num = "";
             for (int i = anotherDec.num.length() - 1; i >= 0; i--) {
                 sum_of_digit = int(anotherDec.num[i] - '0') + int(newNumber.num[i] - '0') + carry;
                 sum.num = to_string((sum_of_digit % 10)) + sum.num;
                 carry = sum_of_digit / 10;
 
             }
+            sum.signOfNumber = -1;
             return sum;
 
         }
@@ -151,13 +192,21 @@ public:
 
 
     bool operator>(BigDecimalInt anotherDec) {
-        if (num.length() > anotherDec.num.length()) {
+        if (anotherDec.signOfNumber < signOfNumber) {
             return true;
+        } else if (anotherDec.signOfNumber > signOfNumber) {
+            return false;
+        } else if ((anotherDec.num.length() < num.length() && anotherDec.signOfNumber == 1) ||
+                   (anotherDec.num.length() > num.length() && anotherDec.signOfNumber == -1)) {
+            return true;
+        } else if ((anotherDec.num.length() < num.length() && anotherDec.signOfNumber == -1) ||
+                   (anotherDec.num.length() > num.length() && anotherDec.signOfNumber == 1)) {
+            return false;
         } else {
             for (int i = 0; i < num.length(); i++) {
-                if (int(num[i] - '0') * signOfNumber > int(anotherDec.num[i] - '0') * anotherDec.signOfNumber) {
+                if (int(num[i] - '0') * signOfNumber > int(num[i] - '0') * anotherDec.signOfNumber) {
                     return true;
-                } else if (num[i] == anotherDec.num[i]) {
+                } else if (num[i] == num[i]) {
                     continue;
                 } else {
                     return false;
@@ -190,7 +239,10 @@ public:
         return *this;
     }
 
-    int size();
+    int size()
+    {
+        return sizeOfNumber;
+    }
 
     int sign() {
         return signOfNumber;
@@ -213,11 +265,12 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 }
 
 int main() {
-    BigDecimalInt num1("2660");
-    num1.signOfNumber = 1;
-    BigDecimalInt num2("200");
-    num2.signOfNumber = 1;
-    cout << num1 - num2 << endl;
+
+    BigDecimalInt num1("5");
+    BigDecimalInt num2("-100");
+
+    cout << (num1 > num2) << endl;
+    //cout << num3 << ' ' << num3.size();
     //num2 = num1;
     //cout << (num1 < num2) << endl;
     //cout << num1 << ' ' << num2;
