@@ -5,10 +5,9 @@
 
 using namespace std;
 
-bool validateInput(string num)
-{
+bool validateInput(string num) {
     regex valid("[+-]?[0-9]+");
-    return regex_match(num, valid);   
+    return regex_match(num, valid);
 }
 
 class BigDecimalInt {
@@ -18,48 +17,39 @@ class BigDecimalInt {
 
 public:
     BigDecimalInt(string decStr) {
-        if(validateInput(decStr))
-            {
-                string temp;
-                int counter = 0;
-                if (decStr[0] == '-')
-                {
-                    this->signOfNumber = -1;
-                }
-                if (decStr.length() == 1 )
-                {
-                    this->num = decStr;
-                }
-                else
-                {
-                    while (decStr[counter] == '0' and counter < decStr.length()) // to remove the left zeros
-                    {
-                        counter++;
-                    }
-                    temp = decStr.substr(counter, decStr.length());
-                    
-                    this->num = temp;
-                    sizeOfNumber = decStr.length() - counter;
-                    }
+        if (validateInput(decStr)) {
+            string temp;
+            int counter = 0;
+            if (decStr[0] == '-') {
+                this->signOfNumber = -1;
             }
-            else
-            {
-                this->num = "0";
+            if (decStr.length() == 1) {
+                this->num = decStr;
+            } else {
+                while (decStr[counter] == '0' and counter < decStr.length() ||
+                       decStr[counter] == '-' and counter < decStr.length() ||
+                       decStr[counter] == '+' and counter < decStr.length()) // to remove the left zeros // edit by dola to remove + and -
+                {
+                    counter++;
+                }
+                temp = decStr.substr(counter, decStr.length());
+
+                this->num = temp;
+                sizeOfNumber = decStr.length() - counter;
             }
+        } else {
+            this->num = "0";
+        }
     };
 
     //initialize from integer constructor : I don't know how to do it btw
-    BigDecimalInt(int decInt)
-    {
-        if (decInt < 0)
-        {
+    BigDecimalInt(int decInt) {
+        if (decInt < 0) {
             signOfNumber = -1;
             this->num = to_string(decInt);
             this->num = num.substr(1, num.length());
             sizeOfNumber = num.size();
-        }
-        else
-        {
+        } else {
             this->num = to_string(decInt);
             sizeOfNumber = num.size();
         }
@@ -104,6 +94,15 @@ public:
 
 
     BigDecimalInt operator-(BigDecimalInt anotherDec) {
+
+        if (signOfNumber != anotherDec.signOfNumber) {
+            int resultSign = signOfNumber;
+            anotherDec.signOfNumber = 1;
+            BigDecimalInt result = *this + anotherDec;
+            result.signOfNumber = resultSign;
+            return result;
+        }
+
         if (anotherDec.num.length() > num.length()) {
             int numberOfZeros = anotherDec.num.length() - num.length();
             string zero = "";
@@ -118,9 +117,8 @@ public:
             anotherDec.num = zero + anotherDec.num;
         }
 
-        BigDecimalInt result(""), newNumber(num);
-        newNumber.signOfNumber = 1;
-        result.signOfNumber = 1;
+        BigDecimalInt newNumber("");
+        newNumber.num = num;
         string secondNumber9sComp = "";
         if (newNumber > anotherDec) {
             for (int i = 0; i < anotherDec.num.length(); i++) {
@@ -131,17 +129,17 @@ public:
 
             BigDecimalInt sum("");
             int sum_of_digit;
-               sum.num = "";
+            sum.num = "";
             int carry = 1;
             for (int i = newNumber.num.length() - 1; i >= 0; i--) {
                 sum_of_digit = int(newNumber.num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
                 sum.num = to_string((sum_of_digit % 10)) + sum.num;
                 carry = sum_of_digit / 10;
             }
-            return sum;
-        } else {
-            if(anotherDec > newNumber){
-            }
+            BigDecimalInt result(sum.num);
+            result.signOfNumber = sum.signOfNumber;
+            return result;
+        } else if (newNumber < anotherDec) {
             for (int i = 0; i < newNumber.num.length(); i++) {
                 secondNumber9sComp += to_string('9' - newNumber.num[i]);
             }
@@ -160,8 +158,13 @@ public:
 
             }
             sum.signOfNumber = -1;
-            return sum;
+            BigDecimalInt result(sum.num);
+            result.signOfNumber = sum.signOfNumber;
+            return result;
 
+        } else {
+            BigDecimalInt result("");
+            return result;
         }
     };
 
@@ -204,9 +207,9 @@ public:
             return false;
         } else {
             for (int i = 0; i < num.length(); i++) {
-                if (int(num[i] - '0') * signOfNumber > int(num[i] - '0') * anotherDec.signOfNumber) {
+                if (int(num[i] - '0') * signOfNumber > int(anotherDec.num[i] - '0') * anotherDec.signOfNumber) {
                     return true;
-                } else if (num[i] == num[i]) {
+                } else if (num[i] == anotherDec.num[i]) {
                     continue;
                 } else {
                     return false;
@@ -239,8 +242,7 @@ public:
         return *this;
     }
 
-    int size()
-    {
+    int size() {
         return sizeOfNumber;
     }
 
@@ -266,10 +268,10 @@ ostream &operator<<(ostream &out, BigDecimalInt b) {
 
 int main() {
 
-    BigDecimalInt num1("5");
-    BigDecimalInt num2("-100");
+    BigDecimalInt num1("100");
+    BigDecimalInt num2("5");
 
-    cout << (num1 > num2) << endl;
+    cout << (num1 + num2) << endl;
     //cout << num3 << ' ' << num3.size();
     //num2 = num1;
     //cout << (num1 < num2) << endl;
