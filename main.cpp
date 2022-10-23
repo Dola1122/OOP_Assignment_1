@@ -5,27 +5,35 @@
 
 using namespace std;
 
-bool validateInput(string num) {
+bool validateInput(string num)
+{
     regex valid("[+-]?[0-9]+");
     return regex_match(num, valid);
 }
 
-class BigDecimalInt {
+class BigDecimalInt
+{
     string num;
     int signOfNumber = 1;
     int sizeOfNumber = 1;
 
 public:
-    BigDecimalInt(string decStr) {
-        if (validateInput(decStr)) {
+    BigDecimalInt(string decStr)
+    {
+        if (validateInput(decStr))
+        {
             string temp;
             int counter = 0;
-            if (decStr[0] == '-') {
+            if (decStr[0] == '-')
+            {
                 this->signOfNumber = -1;
             }
-            if (decStr.length() == 1) {
+            if (decStr.length() == 1)
+            {
                 this->num = decStr;
-            } else {
+            }
+            else
+            {
                 while (decStr[counter] == '0' and counter < decStr.length() ||
                        decStr[counter] == '-' and counter < decStr.length() ||
                        decStr[counter] == '+' and counter < decStr.length()) // to remove the left zeros // edit by dola to remove + and -
@@ -37,37 +45,45 @@ public:
                 this->num = temp;
                 sizeOfNumber = decStr.length() - counter;
             }
-        } else {
+        }
+        else
+        {
             this->num = "0";
         }
     };
 
-    //initialize from integer constructor : I don't know how to do it btw
-    BigDecimalInt(int decInt) {
-        if (decInt < 0) {
+    // initialize from integer constructor : I don't know how to do it btw
+    BigDecimalInt(int decInt)
+    {
+        if (decInt < 0)
+        {
             signOfNumber = -1;
             this->num = to_string(decInt);
             this->num = num.substr(1, num.length());
             sizeOfNumber = num.size();
-        } else {
+        }
+        else
+        {
             this->num = to_string(decInt);
             sizeOfNumber = num.size();
         }
     }
 
-
-    BigDecimalInt operator+(BigDecimalInt anotherDec) {
-        BigDecimalInt sum("");
-        if (anotherDec.num.length() > num.length()) {
+    BigDecimalInt operator+(BigDecimalInt anotherDec)
+    {
+        BigDecimalInt sum(""), temp = *this;
+        sum.num = "";
+        if (anotherDec.num.length() > num.length())
+        {
             int numberOfZeros = anotherDec.num.length() - num.length();
             string zero = "";
             for (int i = 0; i < numberOfZeros; i++)
                 zero = zero + "0";
             zero = zero + num;
-            cout << zero << endl;
             num = zero;
-            cout << num << endl;
-        } else if (anotherDec.num.length() < num.length()) {
+        }
+        else if (anotherDec.num.length() < num.length())
+        {
             int numberOfZeros = num.length() - anotherDec.num.length();
             string zero = "";
             for (int i = 0; i < numberOfZeros; i++)
@@ -75,41 +91,84 @@ public:
             zero = zero + anotherDec.num;
             anotherDec.num = zero;
         }
-
         int sum_of_digit;
-
         int carry = 0;
-        for (int i = num.length() - 1; i >= 0; i--) {
-            sum_of_digit = int(num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
-            sum.num = to_string((sum_of_digit % 10)) + sum.num;
-            carry = sum_of_digit / 10;
 
+        if (signOfNumber == -1 and anotherDec.signOfNumber == -1)
+        {
+            for (int i = num.length() - 1; i >= 0; i--)
+            {
+                sum_of_digit = int(num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
+                sum.num = to_string((sum_of_digit % 10)) + sum.num;
+                carry = sum_of_digit / 10;
+            }
+            if (carry > 0)
+            {
+                sum.num = to_string(carry) + sum.num;
+            }
+            sum.signOfNumber = -1;
         }
-        if (carry > 0) {
-            sum.num = to_string(carry) + sum.num;
+        else if (signOfNumber == -1 and anotherDec.signOfNumber == 1)
+        {
+            signOfNumber *= -1;
+            sum = anotherDec - *this;
         }
+        else if (signOfNumber == 1 and anotherDec.signOfNumber == -1)
+        {
+            anotherDec.signOfNumber *= -1;
+            sum = *this - anotherDec;
+        }
+        else
+        {
+            for (int i = num.length() - 1; i >= 0; i--)
+            {
+                sum_of_digit = int(num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
+                sum.num = to_string((sum_of_digit % 10)) + sum.num;
+                carry = sum_of_digit / 10;
+            }
+            if (carry > 0)
+            {
+                sum.num = to_string(carry) + sum.num;
+            }
+        }
+
+        *this = temp;
         return sum;
-
     }
 
-
-    BigDecimalInt operator-(BigDecimalInt anotherDec) {
-
-        if (signOfNumber != anotherDec.signOfNumber) {
-            int resultSign = signOfNumber;
+    BigDecimalInt operator-(BigDecimalInt anotherDec)
+    {
+        BigDecimalInt temp = *this;
+        if (signOfNumber == -1 and anotherDec.signOfNumber == -1)
+        {
+            BigDecimalInt newNum(num);
             anotherDec.signOfNumber = 1;
-            BigDecimalInt result = *this + anotherDec;
-            result.signOfNumber = resultSign;
+            BigDecimalInt result = anotherDec - newNum;
+            *this = temp;
             return result;
         }
 
-        if (anotherDec.num.length() > num.length()) {
+        if (signOfNumber != anotherDec.signOfNumber)
+        {
+            int resultSign = signOfNumber;
+            anotherDec.signOfNumber = 1;
+            signOfNumber = 1;
+            BigDecimalInt result = *this + anotherDec;
+            result.signOfNumber = resultSign;
+            *this = temp;
+            return result;
+        }
+
+        if (anotherDec.num.length() > num.length())
+        {
             int numberOfZeros = anotherDec.num.length() - num.length();
             string zero = "";
             for (int i = 0; i < numberOfZeros; i++)
                 zero = zero + "0";
             num = zero + num;
-        } else if (anotherDec.num.length() < num.length()) {
+        }
+        else if (anotherDec.num.length() < num.length())
+        {
             int numberOfZeros = num.length() - anotherDec.num.length();
             string zero = "";
             for (int i = 0; i < numberOfZeros; i++)
@@ -120,8 +179,10 @@ public:
         BigDecimalInt newNumber("");
         newNumber.num = num;
         string secondNumber9sComp = "";
-        if (newNumber > anotherDec) {
-            for (int i = 0; i < anotherDec.num.length(); i++) {
+        if (newNumber > anotherDec)
+        {
+            for (int i = 0; i < anotherDec.num.length(); i++)
+            {
                 secondNumber9sComp += to_string('9' - anotherDec.num[i]);
             }
 
@@ -131,16 +192,21 @@ public:
             int sum_of_digit;
             sum.num = "";
             int carry = 1;
-            for (int i = newNumber.num.length() - 1; i >= 0; i--) {
+            for (int i = newNumber.num.length() - 1; i >= 0; i--)
+            {
                 sum_of_digit = int(newNumber.num[i] - '0') + int(anotherDec.num[i] - '0') + carry;
                 sum.num = to_string((sum_of_digit % 10)) + sum.num;
                 carry = sum_of_digit / 10;
             }
             BigDecimalInt result(sum.num);
             result.signOfNumber = sum.signOfNumber;
+            *this = temp;
             return result;
-        } else if (newNumber < anotherDec) {
-            for (int i = 0; i < newNumber.num.length(); i++) {
+        }
+        else if (newNumber < anotherDec)
+        {
+            for (int i = 0; i < newNumber.num.length(); i++)
+            {
                 secondNumber9sComp += to_string('9' - newNumber.num[i]);
             }
 
@@ -151,41 +217,60 @@ public:
 
             int carry = 1;
             sum.num = "";
-            for (int i = anotherDec.num.length() - 1; i >= 0; i--) {
+            for (int i = anotherDec.num.length() - 1; i >= 0; i--)
+            {
                 sum_of_digit = int(anotherDec.num[i] - '0') + int(newNumber.num[i] - '0') + carry;
                 sum.num = to_string((sum_of_digit % 10)) + sum.num;
                 carry = sum_of_digit / 10;
-
             }
             sum.signOfNumber = -1;
             BigDecimalInt result(sum.num);
             result.signOfNumber = sum.signOfNumber;
+            *this = temp;
             return result;
-
-        } else {
+        }
+        else
+        {
             BigDecimalInt result("");
+            *this = temp;
             return result;
         }
     };
 
-    bool operator<(BigDecimalInt anotherDec) {
-        if (signOfNumber < anotherDec.signOfNumber) {
+    bool operator<(BigDecimalInt anotherDec)
+    {
+        if (signOfNumber < anotherDec.signOfNumber)
+        {
             return true;
-        } else if (signOfNumber > anotherDec.signOfNumber) {
+        }
+        else if (signOfNumber > anotherDec.signOfNumber)
+        {
             return false;
-        } else if ((num.length() < anotherDec.num.length() && signOfNumber == 1) ||
-                   (num.length() > anotherDec.num.length() && signOfNumber == -1)) {
+        }
+        else if ((num.length() < anotherDec.num.length() && signOfNumber == 1) ||
+                 (num.length() > anotherDec.num.length() && signOfNumber == -1))
+        {
             return true;
-        } else if ((num.length() < anotherDec.num.length() && signOfNumber == -1) ||
-                   (num.length() > anotherDec.num.length() && signOfNumber == 1)) {
+        }
+        else if ((num.length() < anotherDec.num.length() && signOfNumber == -1) ||
+                 (num.length() > anotherDec.num.length() && signOfNumber == 1))
+        {
             return false;
-        } else {
-            for (int i = 0; i < anotherDec.num.length(); i++) {
-                if (int(anotherDec.num[i] - '0') * anotherDec.signOfNumber > int(num[i] - '0') * signOfNumber) {
+        }
+        else
+        {
+            for (int i = 0; i < anotherDec.num.length(); i++)
+            {
+                if (int(anotherDec.num[i] - '0') * anotherDec.signOfNumber > int(num[i] - '0') * signOfNumber)
+                {
                     return true;
-                } else if (anotherDec.num[i] == num[i]) {
+                }
+                else if (anotherDec.num[i] == num[i])
+                {
                     continue;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
             }
@@ -193,25 +278,40 @@ public:
         return false;
     }
 
-
-    bool operator>(BigDecimalInt anotherDec) {
-        if (anotherDec.signOfNumber < signOfNumber) {
+    bool operator>(BigDecimalInt anotherDec)
+    {
+        if (anotherDec.signOfNumber < signOfNumber)
+        {
             return true;
-        } else if (anotherDec.signOfNumber > signOfNumber) {
+        }
+        else if (anotherDec.signOfNumber > signOfNumber)
+        {
             return false;
-        } else if ((anotherDec.num.length() < num.length() && anotherDec.signOfNumber == 1) ||
-                   (anotherDec.num.length() > num.length() && anotherDec.signOfNumber == -1)) {
+        }
+        else if ((anotherDec.num.length() < num.length() && anotherDec.signOfNumber == 1) ||
+                 (anotherDec.num.length() > num.length() && anotherDec.signOfNumber == -1))
+        {
             return true;
-        } else if ((anotherDec.num.length() < num.length() && anotherDec.signOfNumber == -1) ||
-                   (anotherDec.num.length() > num.length() && anotherDec.signOfNumber == 1)) {
+        }
+        else if ((anotherDec.num.length() < num.length() && anotherDec.signOfNumber == -1) ||
+                 (anotherDec.num.length() > num.length() && anotherDec.signOfNumber == 1))
+        {
             return false;
-        } else {
-            for (int i = 0; i < num.length(); i++) {
-                if (int(num[i] - '0') * signOfNumber > int(anotherDec.num[i] - '0') * anotherDec.signOfNumber) {
+        }
+        else
+        {
+            for (int i = 0; i < num.length(); i++)
+            {
+                if (int(num[i] - '0') * signOfNumber > int(anotherDec.num[i] - '0') * anotherDec.signOfNumber)
+                {
                     return true;
-                } else if (num[i] == anotherDec.num[i]) {
+                }
+                else if (num[i] == anotherDec.num[i])
+                {
                     continue;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
             }
@@ -219,16 +319,26 @@ public:
         return false;
     }
 
-    bool operator==(BigDecimalInt anotherDec) {
-        if (num.length() != anotherDec.num.length()) {
+    bool operator==(BigDecimalInt anotherDec)
+    {
+        if (num.length() != anotherDec.num.length())
+        {
             return false;
-        } else if (signOfNumber != anotherDec.signOfNumber) {
+        }
+        else if (signOfNumber != anotherDec.signOfNumber)
+        {
             return false;
-        } else {
-            for (int i = 0; i < num.length(); i++) {
-                if (num[i] == anotherDec.num[i]) {
+        }
+        else
+        {
+            for (int i = 0; i < num.length(); i++)
+            {
+                if (num[i] == anotherDec.num[i])
+                {
                     continue;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
             }
@@ -236,46 +346,56 @@ public:
         return true;
     }
 
-    BigDecimalInt operator=(BigDecimalInt anotherDec) {
+    BigDecimalInt operator=(BigDecimalInt anotherDec)
+    {
         num = anotherDec.num;
         signOfNumber = anotherDec.signOfNumber;
         return *this;
     }
 
-    int size() {
+    int size()
+    {
         return sizeOfNumber;
     }
 
-    int sign() {
+    int sign()
+    {
         return signOfNumber;
     }
 
     // You will also need to overwrite the << operator as follows: (as friend or external function)
     // k.
     friend ostream &operator<<(ostream &out, BigDecimalInt bigInt);
-
 };
 
-ostream &operator<<(ostream &out, BigDecimalInt b) {
-    if (b.signOfNumber == -1) {
+ostream &operator<<(ostream &out, BigDecimalInt b)
+{
+    if (b.signOfNumber == -1)
+    {
         out << '-';
     }
-    for (int i = 0; i < b.num.size(); i++) {
+    for (int i = 0; i < b.num.size(); i++)
+    {
         out << b.num[i];
     }
     return out;
 }
 
-int main() {
+int main()
+{
 
-    BigDecimalInt num1("100");
-    BigDecimalInt num2("5");
+    // BigDecimalInt num0("10");
+    // BigDecimalInt num1("-10");
+    // BigDecimalInt num2("100");
+    // BigDecimalInt num3("0050");
+    // BigDecimalInt num4("-050");
+    // BigDecimalInt num5("00");
 
-    cout << (num1 + num2) << endl;
-    //cout << num3 << ' ' << num3.size();
-    //num2 = num1;
-    //cout << (num1 < num2) << endl;
-    //cout << num1 << ' ' << num2;
+    // cout << (num2 + num1) << endl;
+    // cout << num3 << ' ' << num3.size();
+    // num2 = num1;
+    // cout << (num1 < num2) << endl;
+    // cout << num1 << ' ' << num2;
     // if (num1 > num2)
     // {
     //     cout << "True!";
@@ -284,6 +404,33 @@ int main() {
     // {
     //     cout << "False!";
     // }
+
+    // cout << num1 + num1 << endl;
+    // cout << num1 + num2 << endl;
+    // cout << num0 - num1 << endl;
+    // cout << num0 + num4 << endl;
+    // cout << num3 - num4 << endl;
+    // cout << num3 + num4 << endl;
+
+    BigDecimalInt num1(10);
+    BigDecimalInt num2(20);
+    BigDecimalInt num3(-10);
+    BigDecimalInt num4(-20);
+    BigDecimalInt num5(00010);
+    BigDecimalInt num6(00020);
+    BigDecimalInt num7(-00010);
+    BigDecimalInt num8(-00020);
+
+    cout << num1 + num2 << endl;
+    cout << num4 + num1 << endl;
+    cout << num2 + num3 << endl;
+    cout << num4 - num8 << endl
+         << endl;
+
+    cout << num1 - num2 << endl;
+    cout << num4 - num1 << endl;
+    cout << num2 - num3 << endl;
+    cout << num4 + num8 << endl;
 
     return 0;
 }
